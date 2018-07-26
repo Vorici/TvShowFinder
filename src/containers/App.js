@@ -9,8 +9,21 @@ class App extends Component {
       shows: [],
       // selectedShow: null,
     };
-  }
 
+    const startTime = new Date();
+    fetch('http://api.tvmaze.com/shows')
+      .then((res) => res.json())
+      .then((shows) =>
+        this.setState({
+          shows,
+        })
+      )
+      .then((endTime) => {
+        const finalTime = new Date();
+        console.log(finalTime.getTime() - startTime.getTime());
+      });
+  }
+  componentDidMount() {}
   getDataFromShowSearch = (term) => {
     // fetch and set shows state
     console.log(term);
@@ -21,6 +34,7 @@ class App extends Component {
   };
 
   render() {
+    console.log(this.state.shows);
     return (
       <div className="App">
         <SearchBar onSearchTermChange={this.handleShowSearch} />
