@@ -1,17 +1,26 @@
-require('es6-promise').polyfill();
-require('isomorphic-fetch');
+require("es6-promise").polyfill();
+require("isomorphic-fetch");
 
 let showObj = { shows: [] };
+const URL = "https://api.tvmaze.com/shows?page=";
 
-getShows = (i) => {
-  fetch(URL + i)
-    .then((res) => res.json())
-    .then((data) => (showObj.shows = showObj.shows.concat(data)));
+getShows = i => {
+  return fetch(URL + i)
+    .then(res => res.json())
+    .then(data => {
+      const englishData = data.filter(show => {
+        return show.language.toLowerCase() === "english";
+      });
+      showObj.shows = showObj.shows.concat(englishData);
+    });
 };
 
-const URL = 'https://api.tvmaze.com/shows?page=';
-for (let i = 0; i < 152; i++) {
-  getShows(i);
+function waitForShows(i = 0) {
+  if (i < 152) {
+    getShows(i).then(() => waitForShows(i + 1));
+  } else {
+    return;
+  }
 }
 
 let showsJSON = JSON.stringify(showObj);
@@ -30,8 +39,3 @@ let showsJSON = JSON.stringify(showObj);
 //   debugger;
 //   showObj.shows.concat(data);
 // };
-
-
-
-
-
