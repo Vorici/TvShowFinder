@@ -8,34 +8,31 @@ getShows = i => {
   return fetch(URL + i)
     .then(res => res.json())
     .then(data => {
-      const englishData = data.filter(show => {
-        return show.language.toLowerCase() === "english";
+      const filteredData = data.filter(show => {
+        return (
+          show.language &&
+          show.language.toLowerCase() === "english" &&
+          show.genres.length > 0 &&
+          show.rating.average > 4
+        );
       });
-      showObj.shows = showObj.shows.concat(englishData);
+      showObj.shows = showObj.shows.concat(filteredData);
     });
 };
 
 function waitForShows(i = 0) {
   if (i < 152) {
     getShows(i).then(() => waitForShows(i + 1));
+    console.log(showObj);
   } else {
-    return;
+    var fs = require("fs");
+    fs.writeFileSync("showsData.json", JSON.stringify(showObj.shows));
   }
 }
 
-let showsJSON = JSON.stringify(showObj);
-// const URL = 'http://api.tvmaze.com/shows?page=';
-// let showObj = { shows: [] };
+waitForShows();
 
-// for (let i = -1; i < 152; i++) {
-//   fetch(URL + i)
-//     .then((res) => res.json())
-//     .then((data) => pushShows(data));
-// }
-// let results = JSON.stringify(showObj);
-// console.log(results);
+// var test = ["hello", "there"];
 
-// pushShows = (data) => {
-//   debugger;
-//   showObj.shows.concat(data);
-// };
+// var fs = require("fs");
+// fs.writeFileSync("showsData.json", JSON.stringify(test));
